@@ -9,7 +9,7 @@ c.fillRect(0,0,canvas.width, canvas.height)
 const gravity = 0.7
 
 class Sprite {
-    constructor({ position, imageSrc, scale = 1, framesMax = 1 }) {
+    constructor({ position, imageSrc, scale = 1, framesMax = 1, framesCurrent = 0, framesElapsed = 0, framesHold = 15, offset = {x: 0, y: 0} }) {
         this.position = position
         this.width = 50
         this.height = 150
@@ -17,17 +17,17 @@ class Sprite {
         this.image.src = imageSrc
         this.scale = scale
         this.framesMax = framesMax
-        this.framesCurrent = 0
-        this.framesElapsed = 
-        this.framesHold = 15
-
+        this.framesCurrent = framesCurrent
+        this.framesElapsed = framesElapsed
+        this.framesHold = framesHold
+        this.offset = offset
     }
 
     draw() {
-        c.drawImage(this.image, this.framesCurrent * (this.image.width / this.framesMax), 0, this.image.width / this.framesMax, this.image.height, this.position.x, this.position.y, (this.image.width / this.framesMax) * this.scale, this.image.height * this.scale)
+        c.drawImage(this.image, this.framesCurrent * (this.image.width / this.framesMax), 0, this.image.width / this.framesMax, this.image.height, this.position.x -this.offset.x, this.position.y - this.offset.y, (this.image.width / this.framesMax) * this.scale, this.image.height * this.scale)
     }
 
-    update() {
+    animateFrames() {
         this.draw()
         this.framesElapsed++
 
@@ -39,11 +39,25 @@ class Sprite {
             }
         }
     }
+
+    update() {
+        this.draw()
+        this.animateFrames()
+    }
 }
 
 class Fighter extends Sprite {
-    constructor({position,velocity, color = 'red', offset }) {
-        this.position = position
+    constructor({position,velocity, color = 'red', imageSrc, scale = 1, framesMax = 1, framesCurrent = 0, framesElapsed = 0, framesHold = 15, offset = {x: 0, y: 0} }, sprites) {
+        super({
+           position,
+           imageSrc,
+           scale,
+           framesMax,
+           framesCurrent,
+           framesElapsed,
+           framesHold,
+           offset
+        })
         this.velocity = velocity
         this.width = 50
         this.height = 150
@@ -60,10 +74,17 @@ class Fighter extends Sprite {
         this.color = color
         this.isAttacking
         this.health = 100
+        this.sprites = sprites
+
+        for (sprites in sprites) {
+            sprites[sprite].image = new Image()
+            sprites[sprite.image.src = sprite[sprite.imageSrc]]
+        }
     }
 
     update() {
         this.draw()
+        this.animateFrames()
         this.attackBox.position.x = this.position.x + this.attackBox.offset.x
         this.attackBox.position.y = this.position.y
         this.position.x += this.velocity.x
@@ -112,6 +133,23 @@ const player = new Fighter({
     offset: {
         x: 0,
         y: 0
+    },
+    imageSrc: './Assets/samuraiSprite/idle.png',
+    framesMax: 8,
+    scale: 2.5,
+    offset: {
+        x: 215,
+        y: 157
+    },
+    sprites: {
+        idle: {
+            imageSrc: './Assets/samuraiSprite/idle.png',
+            framesMax: 8, 
+        },
+        run: {
+            imageSrc: './Assets/samuraiSprite/run.png',
+            framesMax: 8, 
+        }
     }
 })
 
@@ -200,7 +238,7 @@ function animate() {
     background.update() 
     shop.update()   
     player.update()
-    enemy.update()
+   // enemy.update()
 
     player.velocity.x = 0 
     enemy.velocity.x = 0
