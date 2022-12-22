@@ -46,7 +46,7 @@ class Sprite {
 }
 
 class Fighter extends Sprite {
-    constructor({position,velocity, color = 'red', imageSrc, scale = 1, framesMax = 1, framesCurrent = 0, framesElapsed = 0, framesHold = 15, offset = {x: 0, y: 0} , sprites }) {
+    constructor({position,velocity, color = 'red', imageSrc, scale = 1, framesMax = 1, framesCurrent = 0, framesElapsed = 0, framesHold = 15, offset = {x: 0, y: 0} , sprites, attackBox = {offset: {}, width: undefined, height: undefined }}) {
         super({
            position,
            imageSrc,
@@ -66,9 +66,9 @@ class Fighter extends Sprite {
                 x: this.position.x,
                 y: this.position.y
             },
-            offset,
-            width: 100,
-            height: 50
+            offset: attackBox.offset,
+            width: attackBox.width,
+            height: attackBox.height
         }
         this.color = color
         this.isAttacking
@@ -79,7 +79,6 @@ class Fighter extends Sprite {
             sprites[sprite].image = new Image()
             sprites[sprite].image.src = sprites[sprite].imageSrc
         }
-        console.log(this.sprites)
     }
 
     update() {
@@ -87,22 +86,28 @@ class Fighter extends Sprite {
         this.animateFrames()
 
         this.attackBox.position.x = this.position.x + this.attackBox.offset.x
-        this.attackBox.position.y = this.position.y
+        this.attackBox.position.y = this.position.y + this.attackBox.offset.y
+        c.fillRect(this.attackBox.position.x, this.attackBox.position.y, this.attackBox.width, this.position.height)
+
         this.position.x += this.velocity.x
         this.position.y += this.velocity.y
 
         if (this.position.y + this.height + this.velocity.y >= canvas.height - 96) {
             this.velocity.y = 0
+            this.position.y = 330
         } else this.velocity.y += gravity
     }
 
     attack() {
+        this.switchSprite('attack1')
         this.isAttacking = true
         setTimeout(() => {
             this.isAttacking = false
         }, 100)
     }
     switchSprite (sprite) {
+       if (this.image === this.sprites.attack1.image && this.framesCurrent < this.sprites.attack1.framesMax - 1) return
+
         switch (sprite) {
           case 'idle':
             if (this.image !== this.sprites.idle.image) {
@@ -129,6 +134,13 @@ class Fighter extends Sprite {
             if (this.image !== this.sprites.fall.image) {
             this.image = this.sprites.fall.image
             this.framesMax = this.sprites.fall.framesMax
+            this.framesCurrent = 0
+            }
+          break
+          case 'attack1':
+            if (this.image !== this.sprites.attack1.image) {
+            this.image = this.sprites.attack1.image
+            this.framesMax = this.sprites.attack1.framesMax
             this.framesCurrent = 0
             }
           break
@@ -189,8 +201,20 @@ const player = new Fighter({
         fall: {
             imageSrc: './Assets/samuraiSprite/Fall.png',
             framesMax: 2
+        },
+        attack1: {
+            imageSrc: './Assets/samuraiSprite/Attack1.png',
+            framesMax: 6
         }
-    }
+    },
+    attackBox: {
+     offset:{   
+        x: 100,
+        y: 50
+    },
+    width: 155,
+    height : 50
+}
 })
 
 const enemy = new Fighter({
@@ -206,8 +230,46 @@ const enemy = new Fighter({
     offset: {
         x: -50,
         y: 0
-    }
+    },
+    imageSrc: './Assets/kenji/Idle.png',
+    framesMax: 4,
+    scale: 2.5,
+    offset: {
+        x: 215,
+        y: 167
+    },
+    sprites: {
+        idle: {
+            imageSrc: './Assets/kenji/Idle.png',
+            framesMax: 4, 
+        },
+        run: {
+            imageSrc: './Assets/kenji/Run.png',
+            framesMax: 8, 
+        },
+        jump: {
+            imageSrc: './Assets/kenji/Jump.png',
+            framesMax: 2
+        },
+        fall: {
+            imageSrc: './Assets/kenji/Fall.png',
+            framesMax: 2
+        },
+        attack1: {
+            imageSrc: './Assets/kenji/Attack1.png',
+            framesMax: 4
+        } 
+    },
+    attackBox: {
+        offset:{   
+           x: 0,
+           y: 0
+       },
+       width: 100,
+       height : 50
+   } 
 })
+   console.log(player) 
 
 const keys = {
     a: {
@@ -276,7 +338,7 @@ function animate() {
     background.update() 
     shop.update()   
     player.update()
-   // enemy.update()
+    enemy.update()
 
     player.velocity.x = 0 
     enemy.velocity.x = 0
@@ -302,10 +364,19 @@ function animate() {
     //Enemy Movement
     if (keys.ArrowLeft.pressed && enemy.lastKey === 'ArrowLeft') {
         enemy.velocity.x = -3
+        enemy.switchSprite('run')
     } else if (keys.ArrowRight.pressed && enemy.lastKey === 'ArrowRight') {
         enemy.velocity.x = 3
+        enemy.switchSprite('run')
+    } else {
+        enemy.switchSprite('idle')     
+    } 
+    //Enemy Jump
+    if (enemy.velocity.y < 0) {
+        enemy.switchSprite('jump')
+    } else if (enemy.velocity.y > 0) {
+      enemy.switchSprite('fall')
     }
-
     // Detect Collisions
     if (rectangularCollision({
         rectangle1: player,
@@ -369,7 +440,7 @@ window.addEventListener('keydown', (event) => {
             enemy.velocity.y = -20
             break  
         case 'ArrowDown':
-            enemy.isAttacking = true
+            enemy.attack()
             break             
     }
 })
