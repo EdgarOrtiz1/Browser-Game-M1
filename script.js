@@ -28,12 +28,11 @@ class Sprite {
     }
 
     animateFrames() {
-        this.draw()
         this.framesElapsed++
 
-        if (this.framesElapsed % this.framesHold === 0) {
-        if (this.framesCurrent < this.framesMax -1) {
-        this.framesCurrent++
+     if (this.framesElapsed % this.framesHold === 0) {
+        if (this.framesCurrent < this.framesMax - 1) {
+           this.framesCurrent++
      }  else {
         this.framesCurrent = 0
             }
@@ -47,7 +46,7 @@ class Sprite {
 }
 
 class Fighter extends Sprite {
-    constructor({position,velocity, color = 'red', imageSrc, scale = 1, framesMax = 1, framesCurrent = 0, framesElapsed = 0, framesHold = 15, offset = {x: 0, y: 0} }, sprites) {
+    constructor({position,velocity, color = 'red', imageSrc, scale = 1, framesMax = 1, framesCurrent = 0, framesElapsed = 0, framesHold = 15, offset = {x: 0, y: 0} , sprites }) {
         super({
            position,
            imageSrc,
@@ -76,15 +75,17 @@ class Fighter extends Sprite {
         this.health = 100
         this.sprites = sprites
 
-        for (sprites in sprites) {
+        for (const sprite in this.sprites) {
             sprites[sprite].image = new Image()
-            sprites[sprite.image.src = sprite[sprite.imageSrc]]
+            sprites[sprite].image.src = sprites[sprite].imageSrc
         }
+        console.log(this.sprites)
     }
 
     update() {
         this.draw()
         this.animateFrames()
+
         this.attackBox.position.x = this.position.x + this.attackBox.offset.x
         this.attackBox.position.y = this.position.y
         this.position.x += this.velocity.x
@@ -101,8 +102,39 @@ class Fighter extends Sprite {
             this.isAttacking = false
         }, 100)
     }
+    switchSprite (sprite) {
+        switch (sprite) {
+          case 'idle':
+            if (this.image !== this.sprites.idle.image) {
+            this.image = this.sprites.idle.image
+            this.framesMax = this.sprites.idle.framesMax
+            this.framesCurrent = 0
+            }
+          break
+          case 'run':
+            if (this.image != this.sprites.run.image) {
+            this.image = this.sprites.run.image
+            this.framesMax = this.sprites.run.framesMax
+            this.framesCurrent = 0
+            }
+          break
+          case 'jump':
+            if (this.image !== this.sprites.jump.image) {
+            this.image = this.sprites.jump.image
+            this.framesMax = this.sprites.jump.framesMax
+            this.framesCurrent = 0
+            }
+          break
+          case 'fall':
+            if (this.image !== this.sprites.fall.image) {
+            this.image = this.sprites.fall.image
+            this.framesMax = this.sprites.fall.framesMax
+            this.framesCurrent = 0
+            }
+          break
+        }
+    }
 }
-
 const background = new Sprite ({
     position: {
         x: 0,
@@ -134,7 +166,7 @@ const player = new Fighter({
         x: 0,
         y: 0
     },
-    imageSrc: './Assets/samuraiSprite/idle.png',
+    imageSrc: './Assets/samuraiSprite/Idle.png',
     framesMax: 8,
     scale: 2.5,
     offset: {
@@ -143,12 +175,20 @@ const player = new Fighter({
     },
     sprites: {
         idle: {
-            imageSrc: './Assets/samuraiSprite/idle.png',
+            imageSrc: './Assets/samuraiSprite/Idle.png',
             framesMax: 8, 
         },
         run: {
-            imageSrc: './Assets/samuraiSprite/run.png',
+            imageSrc: './Assets/samuraiSprite/Run.png',
             framesMax: 8, 
+        },
+        jump: {
+            imageSrc: './Assets/samuraiSprite/Jump.png',
+            framesMax: 2
+        },
+        fall: {
+            imageSrc: './Assets/samuraiSprite/Fall.png',
+            framesMax: 2
         }
     }
 })
@@ -168,8 +208,6 @@ const enemy = new Fighter({
         y: 0
     }
 })
-
-console.log(player)
 
 const keys = {
     a: {
@@ -244,12 +282,23 @@ function animate() {
     enemy.velocity.x = 0
 
     //Player Movement 
+
     if (keys.a.pressed && player.lastKey === 'a') {
         player.velocity.x = -3
+        player.switchSprite('run')
+    
     } else if (keys.d.pressed && player.lastKey === 'd') {
         player.velocity.x = 3
+        player.switchSprite('run')
+    } else {
+        player.switchSprite('idle')     
+    } 
+    //jump
+    if (player.velocity.y < 0) {
+        player.switchSprite('jump')
+    } else if (player.velocity.y > 0) {
+      player.switchSprite('fall')
     }
-
     //Enemy Movement
     if (keys.ArrowLeft.pressed && enemy.lastKey === 'ArrowLeft') {
         enemy.velocity.x = -3
