@@ -74,16 +74,17 @@ class Fighter extends Sprite {
         this.isAttacking
         this.health = 100
         this.sprites = sprites
+        this.dead = false
 
         for (const sprite in this.sprites) {
-            sprites[sprite].image = new Image()
+            sprites[sprite].image = new Image() 
             sprites[sprite].image.src = sprites[sprite].imageSrc
         }
     }
 
     update() {
         this.draw()
-        this.animateFrames()
+        if (!this.dead) this.animateFrames()
         // attack boxes 
         this.attackBox.position.x = this.position.x + this.attackBox.offset.x
         this.attackBox.position.y = this.position.y + this.attackBox.offset.y
@@ -103,14 +104,29 @@ class Fighter extends Sprite {
         this.switchSprite('attack1')
         this.isAttacking = true
     }
+    attack2() {
+        this.switchSprite('attack2')
+        this.isAttacking = true      
+    }  
    
     takeHit() {
-        this.switchSprite('takeHit')
         this.health -= 20
-        }
+
+        if (this.health <= 0) {
+            this.switchSprite('death')
+        } else this.switchSprite('takeHit')
+    }
     
     switchSprite (sprite) {
+        if (this.image === this.sprites.death.image) {
+           if (this.framesCurrent === this.sprites.death.framesMax - 1) this.dead = true
+            return}
+
        if (this.image === this.sprites.attack1.image && this.framesCurrent < this.sprites.attack1.framesMax - 1) 
+       
+       return
+       
+       if (this.image === this.sprites.attack2.image && this.framesCurrent < this.sprites.attack2.framesMax - 1) 
        
        return
 
@@ -154,10 +170,24 @@ class Fighter extends Sprite {
             this.framesCurrent = 0
             }
           break
+          case 'attack2':
+            if (this.image !== this.sprites.attack2.image) {
+            this.image = this.sprites.attack2.image
+            this.framesMax = this.sprites.attack2.framesMax
+            this.framesCurrent = 0
+            }
+          break
           case 'takeHit':
             if (this.image !== this.sprites.takeHit.image) {
             this.image = this.sprites.takeHit.image
             this.framesMax = this.sprites.takeHit.framesMax
+            this.framesCurrent = 0
+            }
+          break
+          case 'death':
+            if (this.image !== this.sprites.death.image) {
+            this.image = this.sprites.death.image
+            this.framesMax = this.sprites.death.framesMax
             this.framesCurrent = 0
             }
           break
@@ -182,7 +212,7 @@ const shop = new Sprite ({
     framesMax: 6
 })
 
-const player = new Fighter({
+const player = new Fighter ({
     position: {
         x: 0,
         y: 0
@@ -223,9 +253,17 @@ const player = new Fighter({
             imageSrc: './Assets/samuraiSprite/Attack1.png',
             framesMax: 6
         },
+        attack2: {
+            imageSrc: './Assets/samuraiSprite/Attack2.png',
+            framesMax: 6
+        },
         takeHit: {
             imageSrc: './Assets/samuraiSprite/Take Hit - white silhouette.png',
             framesMax: 4
+        },
+        death: {
+            imageSrc: './Assets/samuraiSprite/Death.png',
+            framesMax: 6
         }
     },
     attackBox: {
@@ -238,7 +276,7 @@ const player = new Fighter({
 }
 })
 
-const enemy = new Fighter({
+const enemy = new Fighter ({
     position: {
     x: 400,
     y: 100
@@ -279,12 +317,20 @@ const enemy = new Fighter({
         attack1: {
             imageSrc: './Assets/kenji/Attack1.png',
             framesMax: 4
-        }, 
-        takeHit: {
-           imageSrc: './Assests/kenji/Take hit.png',
-           framesMax: 3 
-        }
         },
+        attack2: {
+            imageSrc: './Assets/kenji/Attack2.png',
+            framesMax: 4 
+         }, 
+        takeHit: {
+           imageSrc: './Assets/kenji/Take hit.png',
+           framesMax: 3 
+        }, 
+        death: {
+           imageSrc: './Assets/kenji/Death.png',
+           framesMax: 7 
+        }
+    },
     attackBox: {
         offset:{   
            x: -185,
@@ -317,7 +363,13 @@ const keys = {
     }, 
     ArrowDown: {
         pressed: false
-    }
+    },
+    p: {
+       pressed: false
+   },
+    q: {
+    pressed: false
+   }  
 }
 
 function rectangularCollision({ rectangle1, rectangle2 }) {
@@ -448,6 +500,7 @@ function animate() {
 animate()
 
 window.addEventListener('keydown', (event) => {
+    if (!player.dead) {
     switch (event.key) {
         case 'd':
             keys.d.pressed = true
@@ -464,23 +517,35 @@ window.addEventListener('keydown', (event) => {
         case ' ':
             player.attack()
             break
-            //Player 2
-            case 'ArrowRight':
-            keys.ArrowRight.pressed = true
-            enemy.lastKey = 'ArrowRight'
+        case 'q':
+            player.attack2()
             break
-        case 'ArrowLeft':
-            keys.ArrowLeft.pressed = true
-            enemy.lastKey = 'ArrowLeft'
-            break
-        case 'ArrowUp':
-            keys.ArrowUp.pressed = true
-            enemy.velocity.y = -20
-            break  
-        case 'ArrowDown':
-            enemy.attack()
-            break             
     }
+    }
+            //Player 2
+            if(!enemy.dead){
+        switch(event.key) {
+            case 'ArrowRight':
+                keys.ArrowRight.pressed = true
+                enemy.lastKey = 'ArrowRight'
+                break
+            case 'ArrowLeft':
+                keys.ArrowLeft.pressed = true
+                enemy.lastKey = 'ArrowLeft'
+                break
+            case 'ArrowUp':
+                keys.ArrowUp.pressed = true
+                enemy.velocity.y = -20
+                break  
+            case 'ArrowDown':
+                enemy.attack()
+                break
+            case 'p':
+                 enemy.attack2()
+                break 
+        }         
+    }
+
 })
 
 window.addEventListener('keyup', (event) => {

@@ -1,0 +1,25 @@
+* {
+    box-sizing: border-box;
+}
+//* top area that holds the damage bars and timer *//
+#Header {
+    position: relative; display: inline-block
+}
+
+#healthbarArea {
+    position: absolute; display: flex; width: 100%; align-items: center; padding: 20px
+}
+
+#playerHealthbars {
+    position: relative; height: 30px; width: 100%; display: flex;justify-content: flex-end
+}
+
+#playerHealthbarsBackground {
+    background-color: yellow; height: 30px; width: 100%
+}
+
+#playerHealth {
+    position:absolute; background: blue; top: 0; right: 0; bottom: 0; width: 100%
+}
+
+//*
