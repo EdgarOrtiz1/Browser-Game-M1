@@ -5,33 +5,30 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fighting Game</title>
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-    </style>
+<link rel="stylesheet" href="style.css">
+    <!--<style>* { box-sizing: border-box;}</style> -->
 </head>
 <body>
         <!--Top area of screen-->
-    <div id="Header" style="position: relative; display: inline-block;">
-        <!--Damage Bars-->
-        <div id="healthbarArea" style="position: absolute; display: flex; width: 100%; align-items: center; padding: 20px;">
+    <div id="Header"> <!--style="position: relative; display: inline-block;" -->
+        <!-- Healthbar Areas-->
+        <div id="healthbarAreas"> <!--style="position: absolute; display: flex; width: 100%; align-items: center; padding: 20px;" -->
         <!--Player Health Bar-->
-        <div id="playerHealthbars" style="position: relative; height: 30px; width: 100%; display: flex;justify-content: flex-end;">
-            <div id="playerHealthbarsBackground" style="background-color: yellow; height: 30px; width: 100%;"></div>
-        <div id = "playerHealth" style="position:absolute; background: blue; top: 0; right: 0; bottom: 0; width: 100%"></div> 
+        <div id="playerHealthbar"> <!-- style="position: relative; height: 30px; width: 100%; display: flex;justify-content: flex-end;"-->
+            <div id="playerHealthbarBackground"></div> <!--style="background-color: yellow; height: 30px; width: 100%;"-->
+        <div id = "playerHealth"></div>  <!-- style="position:absolute; background: blue; top: 0; right: 0; bottom: 0; width: 100%"-->
         </div> 
         <!--Timer-->
-        <div id= "timer" style="background-color: red; width: 100px; height: 100px; flex-shrink: 0;display: flex; align-items: center; justify-content: center;">10</div>
+        <div id= "timer">10</div> <!--style="background-color: red; width: 100px; height: 100px; flex-shrink: 0;display: flex; align-items: center; justify-content: center;" -->
         
         <!--Enemy Health Bar-->
-        <div id="enemyHealthbars" style="position: relative; height: 30px; width: 100%">
-        <div id="enemyHealthbarsBackground" style="background-color: yellow; height: 30px;"></div>
-    <div id = "enemyHealth" style="position:absolute; background: blue; top: 0; right: 0; bottom: 0; left:0"></div> 
+        <div id="enemyHealthbar"> <!-- style="position: relative; height: 30px; width: 100%" -->
+        <div id="enemyHealthbarBackground"></div> <!-- style="background-color: yellow; height: 30px;" -->
+    <div id = "enemyHealth"></div> <!-- style="position:absolute; background: blue; top: 0; right: 0; bottom: 0; left:0" -->
     </div> 
     <div></div>
     </div> 
-    <div id ="displayText" style="position: absolute;color: white; align-items: center; justify-content: center; top: 0; right: 0; bottom: 0; left: 0; display: none;">Tie</div>
+    <div id ="displayText">Tie</div> <!-- style="position: absolute;color: white; align-items: center; justify-content: center; top: 0; right: 0; bottom: 0; left: 0; display: none;" -->
     <canvas></canvas>
     </div>
     <script src="script.js"></script>

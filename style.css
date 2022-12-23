@@ -1,20 +1,25 @@
 * {
     box-sizing: border-box;
 }
-//* top area that holds the damage bars and timer *//
+@media screen and(max-width: 500px) {
+    *{
+        font-size: 10;
+    }
+}
+/* top area that holds the damage bars and timer */
 #Header {
     position: relative; display: inline-block
 }
 
-#healthbarArea {
+#healthbarAreas {
     position: absolute; display: flex; width: 100%; align-items: center; padding: 20px
 }
 
-#playerHealthbars {
+#playerHealthbar {
     position: relative; height: 30px; width: 100%; display: flex;justify-content: flex-end
 }
 
-#playerHealthbarsBackground {
+#playerHealthbarBackground {
     background-color: yellow; height: 30px; width: 100%
 }
 
@@ -22,4 +27,25 @@
     position:absolute; background: blue; top: 0; right: 0; bottom: 0; width: 100%
 }
 
-//*
+/* Timer */
+#timer {
+    background-color: red; width: 100px; height: 100px; flex-shrink: 0;display: flex; align-items: center; justify-content: center
+}
+
+/* Player2 Healthbar*/
+
+#enemyHealthbar {
+    position: relative; height: 30px; width: 100%
+}
+
+#enemyHealthbarBackground {
+    background-color: yellow; height: 30px
+}
+
+#enemyHealth{
+    position:absolute; background: blue; top: 0; right: 0; bottom: 0; left:0
+}
+
+#displayText{
+    position: absolute;color: white; align-items: center; justify-content: center; top: 0; right: 0; bottom: 0; left: 0; display: none
+}
