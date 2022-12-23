@@ -1,3 +1,4 @@
+// Many parts of the code will be differnt due to many complications when following the reference 
 const canvas = document.querySelector('canvas');
 const c = canvas.getContext('2d')
 
@@ -298,7 +299,7 @@ const enemy = new Fighter ({
         x: -50,
         y: 0
     },
-    imageSrc: './Assets/kenji/Idle.png',
+    imageSrc: './Assets/Urokodaki/Idle.png',
     framesMax: 4,
     scale: 2.5,
     offset: {
@@ -307,35 +308,35 @@ const enemy = new Fighter ({
     },
     sprites: {
         idle: {
-            imageSrc: './Assets/kenji/Idle.png',
+            imageSrc: './Assets/Urokodaki/Idle.png',
             framesMax: 4, 
         },
         run: {
-            imageSrc: './Assets/kenji/Run.png',
+            imageSrc: './Assets/Urokodaki/Run.png',
             framesMax: 8, 
         },
         jump: {
-            imageSrc: './Assets/kenji/Jump.png',
+            imageSrc: './Assets/Urokodaki/Jump.png',
             framesMax: 2
         },
         fall: {
-            imageSrc: './Assets/kenji/Fall.png',
+            imageSrc: './Assets/Urokodaki/Fall.png',
             framesMax: 2
         },
         attack1: {
-            imageSrc: './Assets/kenji/Attack1.png',
+            imageSrc: './Assets/Urokodaki/Attack1.png',
             framesMax: 4
         },
         attack2: {
-            imageSrc: './Assets/kenji/Attack2.png',
+            imageSrc: './Assets/Urokodaki/Attack2.png',
             framesMax: 4 
          }, 
         takeHit: {
-           imageSrc: './Assets/kenji/Take hit.png',
+           imageSrc: './Assets/Urokodaki/Take hit.png',
            framesMax: 3 
         }, 
         death: {
-           imageSrc: './Assets/kenji/Death.png',
+           imageSrc: './Assets/Urokodaki/Death.png',
            framesMax: 7 
         }
     },
@@ -348,7 +349,6 @@ const enemy = new Fighter ({
        height : 50
    } 
 })
-   console.log(player) 
 
 const keys = {
     a: {
