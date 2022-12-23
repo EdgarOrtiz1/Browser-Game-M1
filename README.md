@@ -1,6 +1,7 @@
 # Browser-Game-M1
 Greeting to all my name is Edgar Ortiz.
 
+This inspiration for this game was to create a fighting game. My girlfriend ejoys them so that why i chose this concept 
 This game is far from done and it was created using this game as a refernce (https://www.youtube.com/watch?v=vyqbNFMDRGQ&t=11589s).
 This tutorial was 4 hours long yet somehow it took me over 15 hrs of coding in order to get it to that state it is in now.
 I also managed to keep all the js code in one file as opposed to creating multiple files like in the video 
