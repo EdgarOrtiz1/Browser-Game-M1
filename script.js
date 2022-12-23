@@ -24,7 +24,7 @@ class Sprite {
     }
 
     draw() {
-        c.drawImage(this.image, this.framesCurrent * (this.image.width / this.framesMax), 0, this.image.width / this.framesMax, this.image.height, this.position.x -this.offset.x, this.position.y - this.offset.y, (this.image.width / this.framesMax) * this.scale, this.image.height * this.scale)
+        c.drawImage(this.image, this.framesCurrent * (this.image.width / this.framesMax), 0, this.image.width / this.framesMax, this.image.height, this.position.x - this.offset.x, this.position.y - this.offset.y, (this.image.width / this.framesMax) * this.scale, this.image.height * this.scale)
     }
 
     animateFrames() {
@@ -84,10 +84,11 @@ class Fighter extends Sprite {
     update() {
         this.draw()
         this.animateFrames()
-
+        // attack boxes 
         this.attackBox.position.x = this.position.x + this.attackBox.offset.x
         this.attackBox.position.y = this.position.y + this.attackBox.offset.y
-        c.fillRect(this.attackBox.position.x, this.attackBox.position.y, this.attackBox.width, this.position.height)
+       // draw attack boxes
+       // c.fillRect(this.attackBox.position.x, this.attackBox.position.y, this.attackBox.width, this.position.height)
 
         this.position.x += this.velocity.x
         this.position.y += this.velocity.y
@@ -101,12 +102,21 @@ class Fighter extends Sprite {
     attack() {
         this.switchSprite('attack1')
         this.isAttacking = true
-        setTimeout(() => {
-            this.isAttacking = false
-        }, 100)
     }
+   
+    takeHit() {
+        this.switchSprite('takeHit')
+        this.health -= 20
+        }
+    
     switchSprite (sprite) {
-       if (this.image === this.sprites.attack1.image && this.framesCurrent < this.sprites.attack1.framesMax - 1) return
+       if (this.image === this.sprites.attack1.image && this.framesCurrent < this.sprites.attack1.framesMax - 1) 
+       
+       return
+
+        if(this.image === this.sprites.takeHit.image && this.framesCurrent < this.sprites.takeHit.framesMax - 1)
+        
+        return
 
         switch (sprite) {
           case 'idle':
@@ -141,6 +151,13 @@ class Fighter extends Sprite {
             if (this.image !== this.sprites.attack1.image) {
             this.image = this.sprites.attack1.image
             this.framesMax = this.sprites.attack1.framesMax
+            this.framesCurrent = 0
+            }
+          break
+          case 'takeHit':
+            if (this.image !== this.sprites.takeHit.image) {
+            this.image = this.sprites.takeHit.image
+            this.framesMax = this.sprites.takeHit.framesMax
             this.framesCurrent = 0
             }
           break
@@ -205,6 +222,10 @@ const player = new Fighter({
         attack1: {
             imageSrc: './Assets/samuraiSprite/Attack1.png',
             framesMax: 6
+        },
+        takeHit: {
+            imageSrc: './Assets/samuraiSprite/Take Hit - white silhouette.png',
+            framesMax: 4
         }
     },
     attackBox: {
@@ -221,7 +242,7 @@ const enemy = new Fighter({
     position: {
     x: 400,
     y: 100
-},
+    },
     velocity: {
         x: 0,
         y: 0
@@ -258,14 +279,18 @@ const enemy = new Fighter({
         attack1: {
             imageSrc: './Assets/kenji/Attack1.png',
             framesMax: 4
-        } 
-    },
+        }, 
+        takeHit: {
+           imageSrc: './Assests/kenji/Take hit.png',
+           framesMax: 3 
+        }
+        },
     attackBox: {
         offset:{   
-           x: 0,
-           y: 0
+           x: -185,
+           y: 50
        },
-       width: 100,
+       width: 185,
        height : 50
    } 
 })
@@ -377,29 +402,42 @@ function animate() {
     } else if (enemy.velocity.y > 0) {
       enemy.switchSprite('fall')
     }
-    // Detect Collisions
+    // Detect Collisions & getting hit
     if (rectangularCollision({
         rectangle1: player,
         rectangle2: enemy
     }) &&
-    player.isAttacking
+    player.isAttacking && player.framesCurrent === 4
      ) {
+    enemy.takeHit()
     player.isAttacking = false
-    enemy.health -= 20
+
     document.querySelector('#enemyHealth').style.width = enemy.health + '%'     
+    }
+
+    //If player Misses
+    if (player.isAttacking && player.framesCurrent === 4) {
+        player.isAttacking = false
     }
 
     if (rectangularCollision({
         rectangle1: enemy,
         rectangle2: player
     }) &&
-    enemy.isAttacking
+    enemy.isAttacking && enemy.framesCurrent === 2
      ) {
+    player.takeHit()
     enemy.isAttacking = false 
-    player.health -= 20      
+
     document.querySelector('#playerHealth').style.width = player.health + '%'     
     }
-   //end game based on health 
+   
+    //If enemy misses
+    if (enemy.isAttacking && enemy.framesCurrent === 2) {
+        enemy.isAttacking = false
+    }
+
+    //end game based on health 
 
     if (enemy.health <= 0 || player.health <= 0) {
         determineWinner({player, enemy,timerId})
