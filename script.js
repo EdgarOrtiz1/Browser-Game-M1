@@ -7,6 +7,8 @@ canvas.height = 576
 c.fillRect(0,0,canvas.width, canvas.height)
 
 const gravity = 0.7
+// this sprite class is what creates the frame change which in turns animates the images 
+// that is why we add these to the fighting class since the characters must loop through frames 
 
 class Sprite {
     constructor({ position, imageSrc, scale = 1, framesMax = 1, framesCurrent = 0, framesElapsed = 0, framesHold = 15, offset = {x: 0, y: 0} }) {
@@ -26,7 +28,7 @@ class Sprite {
     draw() {
         c.drawImage(this.image, this.framesCurrent * (this.image.width / this.framesMax), 0, this.image.width / this.framesMax, this.image.height, this.position.x - this.offset.x, this.position.y - this.offset.y, (this.image.width / this.framesMax) * this.scale, this.image.height * this.scale)
     }
-
+// this is where we are loopingf through the frames 
     animateFrames() {
         this.framesElapsed++
 
@@ -38,13 +40,16 @@ class Sprite {
             }
         }
     }
-
+// this is where we call the functions within the function in order for it to loop
     update() {
         this.draw()
         this.animateFrames()
     }
 }
-
+// creating the character and adding the values of our sprite class in order to pull the animation properties we want to use for our sprites as welll 
+// i also declared constants to the properties i listed 
+// the ones that would changes i referenced as themselves within the constructor
+// this helped as well later on when calling certain properties in order to render animations 
 class Fighter extends Sprite {
     constructor({position,velocity, color = 'red', imageSrc, scale = 1, framesMax = 1, framesCurrent = 0, framesElapsed = 0, framesHold = 15, offset = {x: 0, y: 0} , sprites, attackBox = {offset: {}, width: undefined, height: undefined }}) {
         super({
@@ -81,15 +86,14 @@ class Fighter extends Sprite {
             sprites[sprite].image.src = sprites[sprite].imageSrc
         }
     }
-
+// here we are establishing the hit boxes for the characters aswell as keeping them with the characters instead of floating around 
     update() {
         this.draw()
+
         if (!this.dead) this.animateFrames()
-        // attack boxes 
+        
         this.attackBox.position.x = this.position.x + this.attackBox.offset.x
         this.attackBox.position.y = this.position.y + this.attackBox.offset.y
-       // draw attack boxes
-       // c.fillRect(this.attackBox.position.x, this.attackBox.position.y, this.attackBox.width, this.position.height)
 
         this.position.x += this.velocity.x
         this.position.y += this.velocity.y
@@ -99,7 +103,8 @@ class Fighter extends Sprite {
             this.position.y = 330
         } else this.velocity.y += gravity
     }
-
+// adding the second attack required me to add a new button aswell as new event listerns and conditionals 
+// however i managed to get it to run and work 
     attack() {
         this.switchSprite('attack1')
         this.isAttacking = true
@@ -116,7 +121,9 @@ class Fighter extends Sprite {
             this.switchSprite('death')
         } else this.switchSprite('takeHit')
     }
-    
+   // these if statements are what help swap the sprites depending on whats goin on 
+   // they are also returning themselves in order to switch back to the default idle stage or reset their frames back to 0
+   // we are always going back to 0 frames since thats the beggining of all the sprites frames  
     switchSprite (sprite) {
         if (this.image === this.sprites.death.image) {
            if (this.framesCurrent === this.sprites.death.framesMax - 1) this.dead = true
@@ -194,6 +201,7 @@ class Fighter extends Sprite {
         }
     }
 }
+// setting the background for the game 
 const background = new Sprite ({
     position: {
         x: 0,
@@ -201,7 +209,7 @@ const background = new Sprite ({
     },
     imageSrc: './Assets/background.png'
 })
-
+// setting up a shop image with the properties of Sprite in order for it to animate or loop through each frame
 const shop = new Sprite ({
     position: {
         x: 600,
@@ -211,7 +219,7 @@ const shop = new Sprite ({
     scale: 2.5,
     framesMax: 6
 })
-
+// here we set the propteries again to the right presets from our constructor calls in the fighting class above 
 const player = new Fighter ({
     position: {
         x: 0,
@@ -275,7 +283,7 @@ const player = new Fighter ({
     height : 50
 }
 })
-
+// here we do the same for our enemy 
 const enemy = new Fighter ({
     position: {
     x: 400,
@@ -371,7 +379,7 @@ const keys = {
     pressed: false
    }  
 }
-
+// this is where we start detecting collisios 
 function rectangularCollision({ rectangle1, rectangle2 }) {
     return (
         rectangle1.attackBox.position.x + rectangle1.attackBox.width >= rectangle2.position.x && 
@@ -380,6 +388,9 @@ function rectangularCollision({ rectangle1, rectangle2 }) {
         rectangle1.attackBox.position.y <= rectangle2.position.y + rectangle2.height
     )
 }
+// here we have the statement that will render depending on the outcome 
+// player 1 and player 2 are not listed on the index.html file
+// the reason why is that the else if statements will render the text we give it if it meets the conditions 
 
 function determineWinner({player, enemy, timerId}) {
     clearTimeout(timerId)
@@ -392,7 +403,9 @@ function determineWinner({player, enemy, timerId}) {
          document.querySelector('#displayText').innerHTML = 'Player 2 wins'
      }
 }
-
+// setting a clock animation 
+// we then make the timer countdown every 1 second until it is no longer greater than 0 
+// we add the determine winner function to state if the game ends and the game will determine the winnner based on those conditions 
 let timer = 60
 let timerId
 function decreaseTimer() {
@@ -406,7 +419,7 @@ function decreaseTimer() {
         determineWinner({player, enemy})
   }    
 }
-
+// here we call the funtions in order for them to continue to run 
 decreaseTimer()
 function animate() {
     window.requestAnimationFrame(animate)
@@ -420,8 +433,9 @@ function animate() {
     player.velocity.x = 0 
     enemy.velocity.x = 0
 
-    //Player Movement 
-
+// Player Movement 
+// This will push the sprite to change
+// I have conditionals set to track if they same key is pressed and and released then the switch sprite funnction will be called 
     if (keys.a.pressed && player.lastKey === 'a') {
         player.velocity.x = -3
         player.switchSprite('run')
@@ -432,7 +446,8 @@ function animate() {
     } else {
         player.switchSprite('idle')     
     } 
-    //jump
+// jump
+// this functiona;ity will keep 
     if (player.velocity.y < 0) {
         player.switchSprite('jump')
     } else if (player.velocity.y > 0) {
@@ -454,7 +469,7 @@ function animate() {
     } else if (enemy.velocity.y > 0) {
       enemy.switchSprite('fall')
     }
-    // Detect Collisions & getting hit
+    // Detect Collisions & taking damage 
     if (rectangularCollision({
         rectangle1: player,
         rectangle2: enemy
@@ -488,17 +503,19 @@ function animate() {
     if (enemy.isAttacking && enemy.framesCurrent === 2) {
         enemy.isAttacking = false
     }
-
-    //end game based on health 
-
+// conditional to end game if 
+// end game based on health 
     if (enemy.health <= 0 || player.health <= 0) {
-        determineWinner({player, enemy,timerId})
+        determineWinner({player, enemy, timerId})
     }
  }
  
-
+//claling the animate tag in order for it to run 
 animate()
-
+// key press
+// this eventListener helps the code break or pause in between each change in sprite/ key input
+// this is also stating the dead animation will prevent any other movement if the player/enemy is dead 
+// by its corresponding character 
 window.addEventListener('keydown', (event) => {
     if (!player.dead) {
     switch (event.key) {
@@ -523,7 +540,7 @@ window.addEventListener('keydown', (event) => {
     }
     }
             //Player 2
-            if(!enemy.dead){
+    if(!enemy.dead){
         switch(event.key) {
             case 'ArrowRight':
                 keys.ArrowRight.pressed = true
@@ -547,7 +564,8 @@ window.addEventListener('keydown', (event) => {
     }
 
 })
-
+// Key release 
+// this is where we can track when we lift up our fingers from the keys in order to properly start the next movement 
 window.addEventListener('keyup', (event) => {
     switch (event.key) {
         case 'd':
@@ -560,8 +578,7 @@ window.addEventListener('keyup', (event) => {
             keys.w.pressed = false
             lastKey = 'w'
             break  
-
-        //Player 2
+// Player 2 functionality, we dont have to listen for  the attack buttons because another function will be tracking those inputs 
         case 'ArrowRight':
             keys.ArrowRight.pressed = false
             enemy.lastKey = 'ArrowRight'

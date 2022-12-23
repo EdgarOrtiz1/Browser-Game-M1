@@ -1,6 +1,11 @@
 * {
     box-sizing: border-box;
+    font-family: 'Press Start 2P', cursive;
 }
+/* when implementing the css code it made it fit the size of the browser
+so i limited the viewport in order for my healthbars to be aligned 
+with the game
+reference : 'https://blog.hubspot.com/website/viewport' */
 @media screen and(max-width: 500px) {
     *{
         font-size: 10;
@@ -8,44 +13,88 @@
 }
 /* top area that holds the damage bars and timer */
 #Header {
-    position: relative; display: inline-block
+    position: relative;
+    display: inline-block
 }
-
+/* Area where the healthbars for both player and enemy are placed */
 #healthbarAreas {
-    position: absolute; display: flex; width: 100%; align-items: center; padding: 20px
+    position: absolute; 
+    display: flex; 
+    width: 100%; 
+    align-items: center; 
+    padding: 10px
 }
-
+/* this repsents the player health bar only*/
 #playerHealthbar {
-    position: relative; height: 30px; width: 100%; display: flex;justify-content: flex-end
+    position: relative; 
+    width: 100%; 
+    display: flex;
+    justify-content: flex-end;
+    border: 4px solid white;
+    border-right: none;
 }
-
+/*the health bar has two layers like most fighting games to show the decrease*/
 #playerHealthbarBackground {
-    background-color: yellow; height: 30px; width: 100%
+    background-color: #d8b4fe; 
+    height: 30px; 
+    width: 100%
 }
 
 #playerHealth {
-    position:absolute; background: blue; top: 0; right: 0; bottom: 0; width: 100%
+    position:absolute; 
+    background: #a78bfa; 
+    top: 0; 
+    right: 0; 
+    bottom: 0; 
+    width: 100%
 }
 
 /* Timer */
 #timer {
-    background-color: red; width: 100px; height: 100px; flex-shrink: 0;display: flex; align-items: center; justify-content: center
+    background-color: #0f172a; 
+    color: white; 
+    width: 100px; 
+    height: 100px; 
+    flex-shrink: 0;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    border: 4px solid white;
 }
 
 /* Player2 Healthbar*/
 
+/* this repsents the player health bar only*/
 #enemyHealthbar {
-    position: relative; height: 30px; width: 100%
+    position: relative; 
+    width: 100%;
+    border: 4px solid white;
+    border-left: none;
 }
 
 #enemyHealthbarBackground {
-    background-color: yellow; height: 30px
+    background-color: #d8b4fe; 
+    height: 30px
 }
 
 #enemyHealth{
-    position:absolute; background: blue; top: 0; right: 0; bottom: 0; left:0
+    position:absolute; 
+    background: #a78bfa; 
+    top: 0; 
+    right: 0; 
+    bottom: 0; 
+    left:0
 }
-
+/*styling for the 'tie' 'player 1 wins' and 'player 2 wins' text */ 
 #displayText{
-    position: absolute;color: white; align-items: center; justify-content: center; top: 0; right: 0; bottom: 0; left: 0; display: none
+    position: absolute;
+    color: #faf5ff; 
+    align-items: center; 
+    justify-content: center; 
+    top: 0; 
+    right: 0; 
+    bottom: 0; 
+    left: 0; 
+    display: none;
+    font-size: 50px;
 }
